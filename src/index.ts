@@ -1,16 +1,20 @@
-import 'dotenv/config.js';
+import { config } from 'dotenv';
+config();
 import express from 'express';
 import cors from 'cors';
 import { randomUUID } from 'node:crypto';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
-import { validateAuth } from './utils/google-auth';
 import * as tools from './tools/index.js';
+import { requestContextMiddleware } from './utils/requestContext';
+import { authMiddleware } from './utils/auth-middleware';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(requestContextMiddleware);
+app.use(authMiddleware);
 
 /**
  * Session store with metadata
@@ -160,7 +164,6 @@ async function getOrCreateTransport(sessionId: string | undefined) {
  * MCP post route.
  */
 app.post('/mcp', async (req, res) => {
-  validateAuth();
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
   let transport: StreamableHTTPServerTransport;
   if (sessionId && sessions[sessionId]) {
