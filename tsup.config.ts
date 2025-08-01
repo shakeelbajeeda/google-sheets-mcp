@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
   entry: ['src/index.ts'],
   outDir: 'dist',
-  format: ['esm'],
+  format: ['esm', 'cjs'],
   target: 'node18',
   bundle: true,
   minify: false,
@@ -19,7 +19,14 @@ export default defineConfig({
     'gcp-metadata',
     'gtoken',
     'google-p12-pem',
-    'dotenv'
+    'dotenv',
+    'express',
+    'cors',
+    'path',
+    'fs',
+    'http-errors',
+    'raw-body',
+    'depd'
   ],
   noExternal: [
     '@modelcontextprotocol/sdk',
